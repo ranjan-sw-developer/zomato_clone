@@ -1,0 +1,191 @@
+openapi: 3.0.0
+info:
+  title: Zomato Clone API
+  version: 1.0.0
+  description: Backend API for Zomato Clone (Admin & Customer)
+
+servers:
+  - url: http://localhost:5000/api
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    UserRegister:
+      type: object
+      required: [name, email, password, role]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [admin, customer]
+
+    UserLogin:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    Restaurant:
+      type: object
+      required: [name, description, address]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        address:
+          type: string
+        image:
+          type: string
+
+    Dish:
+      type: object
+      required: [name, price, description, restaurantId]
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+        description:
+          type: string
+        image:
+          type: string
+        restaurantId:
+          type: string
+
+    OrderItem:
+      type: object
+      required: [dishId, quantity]
+      properties:
+        dishId:
+          type: string
+        quantity:
+          type: integer
+
+    Order:
+      type: object
+      required: [restaurantId, items]
+      properties:
+        restaurantId:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRegister"
+      responses:
+        "201":
+          description: User registered
+        "400":
+          description: User already exists
+
+  /auth/login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLogin"
+      responses:
+        "200":
+          description: JWT Token returned
+        "400":
+          description: Invalid credentials
+
+  /restaurants:
+    get:
+      summary: Get all restaurants
+      responses:
+        "200":
+          description: List of restaurants
+    post:
+      summary: Add a restaurant (Admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Restaurant"
+      responses:
+        "201":
+          description: Restaurant created
+        "403":
+          description: Unauthorized
+
+  /dishes:
+    post:
+      summary: Add a dish (Admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Dish"
+      responses:
+        "201":
+          description: Dish added
+
+  /dishes/{restaurantId}:
+    get:
+      summary: Get dishes by restaurant ID
+      parameters:
+        - in: path
+          name: restaurantId
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: List of dishes
+
+  /orders:
+    post:
+      summary: Place order (Customer only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Order"
+      responses:
+        "201":
+          description: Order placed
+
+    get:
+      summary: Get customer's orders
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of orders
