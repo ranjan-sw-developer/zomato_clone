@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:zomato_app/admin_web/features/authentication/auth_controller.dart';
+import 'package:zomato_app/admin_web/features/authentication/controller/auth_controller.dart';
 import 'package:zomato_app/common_widgets/image_slider.dart';
 import 'package:zomato_app/common_widgets/common_red_button.dart';
 import 'package:zomato_app/common_widgets/common_textInput.dart';

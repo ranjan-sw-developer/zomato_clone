@@ -5,7 +5,7 @@ info:
   description: Backend API for Zomato Clone (Admin & Customer)
 
 servers:
-  - url: http://localhost:5000/api
+  - url: https://zomato-backend-92de.onrender.com/api
 
 components:
   securitySchemes:
